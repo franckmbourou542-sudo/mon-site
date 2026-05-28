@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Portfolio Professionnel</title>
+    <style>
+        /* --- VARIABLES ET DESIGN SYSTEM --- */
+        :root {
+            --bg-portfolio: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #38bdf8; /* Bleu moderne */
+            --accent: #ff4a5a;  /* Rouge FrAnime */
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-portfolio);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+
+        /* --- BARRE DE NAVIGATION RAPIDE --- */
+        .navbar-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            background-color: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--primary); }
+
+        /* --- CONTENEUR GENERAL --- */
+        .container {
+            max-w: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* --- SECTION EN-TÊTE (HERO) --- */
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .hero h1 { font-size: 2.8rem; margin-bottom: 10px; }
+        .hero h1 span { color: var(--primary); }
+        .hero p { color: var(--text-muted); font-size: 1.2rem; }
+
+        /* --- STYLE DES SECTIONS --- */
+        section {
+            margin-bottom: 60px;
+            scroll-margin-top: 100px; /* Aligne le défilement avec la navbar */
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
+        }
+
+        /* --- DISPOSITION DE LA SECTION À PROPOS --- */
+        .about-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+
+        .about-text p {
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        /* Bloc d'informations clés (Localisation, école) */
+        .info-sidebar {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+        }
+
+        .info-item:last-child { margin-bottom: 0; }
+        .info-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value { font-size: 1.05rem; font-weight: 500; }
+
+        /* --- GRILLE DES PROJETS --- */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .project-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .project-banner {
+            height: 180px;
+            background: linear-gradient(45deg, #111217, var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        .project-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-grow: 1;
+        }
+
+        .tags { display: flex; gap: 8px; flex-wrap: wrap; }
+        .tag { background-color: rgba(56, 189, 248, 0.1); color: var(--primary); padding: 4px 10px; font-size: 0.8rem; border-radius: 20px; }
+
+        .view-btn {
+            background-color: var(--primary);
+            color: #0f172a;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: auto;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+        .view-btn:hover { background-color: #7dd3fc; }
+
+        /* --- FENÊTRE MODALE DU SITE D'ANIME --- */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(15, 23, 42, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal.active { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background-color: #111217;
+            width: 100%; max-width: 1100px; height: 85vh;
+            border-radius: 12px; border: 1px solid var(--border);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        .modal-header {
+            background-color: var(--bg-card);
+            padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .close-btn { background: transparent; border: none; color: var(--text-main); font-size: 28px; cursor: pointer; }
+        .modal-iframe { width: 100%; height: 100%; border: none; }
+
+        footer { text-align: center; padding: 30px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem; margin-top: auto; }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 850px) {
+            .about-layout { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRE DE NAVIGATION -->
+    <nav class="navbar-top">
+        <div style="font-weight: bold; font-size: 1.2rem; color: var(--primary);">Portfolio.</div>
+        <div class="nav-links">
+            <a href="#about">À Propos</a>
+            <a href="#projects">Projets</a>
+        </div>
+    </nav>
+
+    <!-- ZONE HERO -->
+    <header class="hero">
+        <h1>Bonjour, je suis <span>L'Etudiant Mbourou Franck Etienne</span></h1>
+        <p>Développeur Web Passionné & Concepteur d'Interfaces</p>
+    </header>
+
+    <main class="container">
+        
+        <!-- SECTION À PROPOS DE MOI -->
+        <section id="about">
+            <h2 class="section-title">À Propos de Moi</h2>
+            <div class="about-layout">
+                
+                <!-- Biographie et parcours -->
+                <div class="about-text">
+                    <p>
+                        Passionné par l'univers informatique et la création numérique, je me spécialise dans le développement d'applications web fluides et dynamiques. Mon intérêt pour la programmation m'amène à concevoir des architectures frontend propres et responsives.
+                    </p>
+                    <p>
+                        Mon parcours scolaire combine une formation académique rigoureuse en <strong>Informatique</strong> à l'établissement <strong>L'IUT De Douala</strong>, et un apprentissage technique autodidacte poussé. Cette double approche me permet de comprendre les concepts théoriques tout en restant ancré dans la pratique concrète du code.
+                    </p>
+                    <p>
+                        Toujours à l'écoute des nouvelles technologies, j'aime relever des défis techniques complexes, comme le montre la réplication d'interfaces modernes haut de gamme nécessitant une gestion fine du multimédia et du responsive design.
+                    </p>
+                </div>
+
+                <!-- Informations personnelles clés -->
+                <div class="info-sidebar">
+                    <div class="info-item">
+                        <span class="info-label">📍 Résidence</span>
+                        <span class="info-value">Quartier PK12 de la ville de Douala</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">🎓 Études Actuelles</span>
+                        <span class="info-value">Niveau 1 informatique</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">🏫 Établissement</span>
+                        <span class="info-value">L'IUT de Douala</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">✉️ Contact</span>
+                        <span class="info-value">franckmbourou542@gmail.com</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION PROJETS -->
+        <section id="projects">
+            <h2 class="section-title">Mes Réalisations</h2>
+            <div class="projects-grid">
+                
+                <!-- CARTE PROJET FRANIME -->
+                <div class="project-card">
+                    <div class="project-banner">
+                        FrAnime<span style="color:var(--accent)">Clone</span>
+                    </div>
+                    <div class="project-info">
+                        <h3>Plateforme Streaming Anime</h3>
+                        <p>Une réplication optimisée de l'interface graphique de FrAnime. Ce projet intègre une gestion dynamique de liste d'épisodes en JavaScript, un lecteur vidéo local autonome avec enchaînement automatique et un moteur de recherche en temps réel.</p>
+                        <div class="tags">
+                            <span class="tag">HTML5 / CSS3</span>
+                            <span class="tag">JavaScript (ES6)</span>
+                            <span class="tag">Responsive Design</span>
+                        </div>
+                        <button id="open-anime-project" class="view-btn">Lancer l'Application</button>
+                    </div>
+                </div>
+
+                <!-- CARTE PROJET APPRENTISSAGE -->
+                <div class="project-card">
+                    <div class="project-banner" style="background: linear-gradient(45deg, #1e293b, #0ea5e9);">
+                        Lab.js
+                    </div>
+                    <div class="project-info">
+                        <h3>Algorithmes & Logique Frontend</h3>
+                        <p>Un espace de stockage regroupant mes différents scripts de recherche, gestion de bases de données locales (localStorage) et manipulations complexes du DOM pour optimiser les performances des applications web.</p>
+                        <div class="tags">
+                            <span class="tag">Algorithmique</span>
+                            <span class="tag">JSON</span>
+                        </div>
+                        <button class="view-btn" style="background-color: var(--border); color: var(--text-muted); cursor: not-allowed;">Dépôt privé</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PIED DE PAGE -->
+    <footer>
+        &copy; 2026 - Créé par [Votre Prénom/Pseudo]. Tous droits réservés.
+    </footer>
+
+    <!-- INTERACTION : MODALE DE CHARGEMENT DU SITE -->
+    <div id="project-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="color: var(--text-main);">Projet : FrAnime Clone (Mode Interactif)</h3>
+                <button id="close-modal" class="close-btn">&times;</button>
+            </div>
+            <iframe id="modal-frame" class="modal-iframe" src=""></iframe>
+        </div>
+    </div>
+
+    <!-- LOGIQUE DE LA FENÊTRE MODALE -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const openBtn = document.getElementById("open-anime-project");
+            const closeBtn = document.getElementById("close-modal");
+            const modal = document.getElementById("project-modal");
+            const iframe = document.getElementById("modal-frame");
+
+            openBtn.addEventListener("click", () => {
+                iframe.src = "index.html"; // Charge le site d'anime
+                modal.classList.add("active");
+            });
+
+            function fermerModale() {
+                modal.classList.remove("active");
+                iframe.src = ""; // Coupe la vidéo
+            }
+
+            closeBtn.addEventListener("click", fermerModale);
+            modal.addEventListener("click", (e) => {
+                if (e.target === modal) fermerModale();
+            });
+        });
+    </script>
+</body>
+</html>
